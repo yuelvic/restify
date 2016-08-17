@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
@@ -76,45 +78,12 @@ public class RestObject {
         }
 
         /**
-         * Puts a string value to body
+         * Puts a value to body
          * @param key Body key
          * @param value Key value
          * @return Builder instance
          */
-        public Builder putString(String key, String value) {
-            body.put(key, value);
-            return this;
-        }
-
-        /**
-         * Puts an integer to body
-         * @param key Body key
-         * @param value Key value
-         * @return Builder instance
-         */
-        public Builder putInt(String key, int value) {
-            body.put(key, value);
-            return this;
-        }
-
-        /**
-         * Puts a double to body
-         * @param key Body key
-         * @param value Key value
-         * @return Builder instance
-         */
-        public Builder putDouble(String key, double value) {
-            body.put(key, value);
-            return this;
-        }
-
-        /**
-         * Puts a boolean to body
-         * @param key Body key
-         * @param value Key value
-         * @return Builder instance
-         */
-        public Builder putBoolean(String key, boolean value) {
+        public Builder put(String key, Object value) {
             body.put(key, value);
             return this;
         }
@@ -124,6 +93,12 @@ public class RestObject {
          */
         public RestObject create() {
             return new RestObject(this);
+        }
+
+        public RestObject findAll(Restify.Call call) {
+            RestObject restObject = new RestObject(this);
+            restObject.findAll(call);
+            return restObject;
         }
 
         /**
@@ -186,14 +161,37 @@ public class RestObject {
         this.body = map;
     }
 
+    /**
+     * Puts a header
+     * @param key Header Key
+     * @param value Key value
+     */
+    public void addHeader(String key, Object value) {
+        header.put(key, value);
+    }
+
+    /**
+     * Adds a constraint
+     * @param key Constraint key
+     * @param value Key value
+     */
     public void addConstraint(String key, Object value) {
         constraint.put(key, value);
     }
 
     /**
+     * Puts a body field
+     * @param key Field key
+     * @param value Key value
+     */
+    public void addField(String key, Object value) {
+        body.put(key, value);
+    }
+
+    /**
      * Creates an object to remote
      */
-    public void create(Restify.Call call) {
+    public void post(Restify.Call call) {
         observable = service.create(header, endpoint, body);
         execute(call);
     }
@@ -296,21 +294,28 @@ public class RestObject {
      * API routes
      */
     public interface CRUD {
+        @FormUrlEncoded
         @POST("{endpoint}")
         Observable<HashMap<String, Object>> create(@HeaderMap HashMap<String, Object> header,
-                                                   @Path("endpoint") String endpoint, @Body HashMap<String, Object> body);
+                                                   @Path(value = "endpoint", encoded = true) String endpoint,
+                                                   @FieldMap HashMap<String, Object> body);
         @GET("{endpoint}")
         Observable<HashMap<String, Object>> findAll(@HeaderMap HashMap<String, Object> header,
-                                                    @Path("endpoint") String endpoint, @QueryMap HashMap<String, Object> constraint);
+                                                    @Path(value = "endpoint", encoded = true) String endpoint,
+                                                    @QueryMap HashMap<String, Object> constraint);
         @GET("{endpoint}/{id}")
         Observable<HashMap<String, Object>> findById(@HeaderMap HashMap<String, Object> header,
-                                                     @Path("endpoint") String endpoint, @Path("id") int id);
+                                                     @Path(value = "endpoint", encoded = true) String endpoint,
+                                                     @Path("id") int id);
+        @FormUrlEncoded
         @PUT("{endpoint}/{id}")
-        Observable<HashMap<String, Object>> update(@HeaderMap HashMap<String, Object> header, @Path("endpoint") String endpoint,
-                                                   @Path("id") int id, @Body HashMap<String, Object> body);
+        Observable<HashMap<String, Object>> update(@HeaderMap HashMap<String, Object> header,
+                                                   @Path(value = "endpoint", encoded = true) String endpoint,
+                                                   @Path("id") int id, @FieldMap HashMap<String, Object> body);
         @DELETE("{endpoint}/{id}")
         Observable<HashMap<String, Object>> delete(@HeaderMap HashMap<String, Object> header,
-                                                   @Path("endpoint") String endpoint, @Path("id") int id);
+                                                   @Path(value = "endpoint", encoded = true) String endpoint,
+                                                   @Path("id") int id);
     }
 
 }
