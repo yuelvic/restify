@@ -19,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
         Restify.initialize("https://yts.ag/api/v2/");
 
         RestObject restObject = new RestObject();
-        restObject.setEndpoint("list_movies.json");
+        restObject.setEndpoint("movie_details.json");
+        restObject.addConstraint("movie_id", 5506);
 
         restObject.findAll(new Restify.Call() {
             @Override

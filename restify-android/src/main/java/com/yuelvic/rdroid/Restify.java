@@ -3,8 +3,6 @@ package com.yuelvic.rdroid;
 import android.content.Context;
 import android.util.Log;
 
-import com.yuelvic.rdroid.util.RestResult;
-
 import java.util.HashMap;
 
 /**

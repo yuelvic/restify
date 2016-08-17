@@ -12,6 +12,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -26,6 +27,7 @@ public class RestObject {
     private CRUD service;
     private String endpoint;
     private HashMap<String, Object> body;
+    private HashMap<String, Object> constraint;
 
     private Observable<HashMap<String, Object>> observable;
 
@@ -156,6 +158,10 @@ public class RestObject {
         this.body = map;
     }
 
+    public void addConstraint(String key, Object value) {
+        constraint.put(key, value);
+    }
+
     /**
      * Creates an object to remote
      */
@@ -169,7 +175,7 @@ public class RestObject {
      * @param call Call instance
      */
     public void findAll(Restify.Call call) {
-        observable = service.findAll(endpoint);
+        observable = service.findAll(endpoint, constraint);
         execute(call);
     }
 
@@ -228,7 +234,11 @@ public class RestObject {
                 });
     }
 
+    /**
+     * Initializes utilities
+     */
     private void initUtils() {
+        this.constraint = new HashMap<>();
         this.restify = Restify.getInstance();
         this.service = ApiService.createApiService(CRUD.class, restify.getBaseUrl());
     }
@@ -257,7 +267,7 @@ public class RestObject {
         @POST("{endpoint}")
         Observable<HashMap<String, Object>> create(@Path("endpoint") String endpoint, @Body HashMap<String, Object> body);
         @GET("{endpoint}")
-        Observable<HashMap<String, Object>> findAll(@Path("endpoint") String endpoint);
+        Observable<HashMap<String, Object>> findAll(@Path("endpoint") String endpoint, @QueryMap HashMap<String, Object> constraint);
         @GET("{endpoint}/{id}")
         Observable<HashMap<String, Object>> findById(@Path("endpoint") String endpoint, @Path("id") int id);
         @PUT("{endpoint}/{id}")
