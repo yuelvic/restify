@@ -3,7 +3,7 @@ Object based REST for Android
 
 ## Installation
 
-Add this to your **build.gradle** file
+Add this to your root **build.gradle** file
 
 ```
 	allprojects {
@@ -13,9 +13,12 @@ Add this to your **build.gradle** file
 		}
 	}
 ```
+
+And to your project **build.gradle** file
+
 ```
   	dependencies {
-		compile 'com.github.yuelvic:restify-android:v0.0.1-alpha'
+		compile 'com.github.yuelvic:Restify:v0.0.1-alpha'
 	}
 ```
 
