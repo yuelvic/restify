@@ -17,11 +17,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Restify.initialize("http://stg.api.swiperxapp.com/api/1/");
+        Restify.initialize("http://api.domain/api/v1/");
 
         RestObject restObject = new RestObject.Builder()
                 .setEndpoint("users")
-                .addHeader("X-Warp-API-Key", "130rfenj1389eu398uhfr3198f")
+                .addHeader("Header-Key", "fg7fsd9fsd8fds9uds9")
                 .create();
 
         restObject.findAll(new Restify.Call() {
