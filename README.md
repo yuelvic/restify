@@ -14,8 +14,8 @@ Add this to your **build.gradle** file
 	}
 ```
 ```
-  dependencies {
-		compile 'com.github.User:Repo:Tag'
+  	dependencies {
+		compile 'com.github.yuelvic:restify-android:v0.0.1-alpha'
 	}
 ```
 
@@ -29,7 +29,7 @@ Restify.initialize("http://api.movielibrary.com/api/v1/");
 
 ## Usage
 
-Create a RestObject instance or use the builder pattern.
+Create a RestObject instance or use the builder class.
 
 ```java
 new RestObject.Builder()
