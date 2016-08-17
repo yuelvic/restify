@@ -22,14 +22,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textview);
 
-        Restify.initialize("http://192.168.0.101:3000/api/1/");
+        Restify.initialize("http://your.api.domain/api/1/");
 
         RestObject restObject = new RestObject();
-        restObject.setEndpoint("classes/news");
-        restObject.addHeader("X-Warp-API-Key", "130rfenj1389eu398uhfr3198f");
+        restObject.setEndpoint("movies");
         restObject.addHeader("Content-Type", "application/json");
-        restObject.addField("message", "Edited post");
-        restObject.update(2, new Restify.Call() {
+        restObject.addConstraint("limit", 10);
+        restObject.findAll(new Restify.Call() {
             @Override
             public void onCompleted() {
 
