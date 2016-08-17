@@ -30,3 +30,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 }
+
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.yuelvic'
