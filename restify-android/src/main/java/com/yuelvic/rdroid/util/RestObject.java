@@ -7,7 +7,11 @@ import com.yuelvic.rdroid.http.ApiService;
 import java.util.HashMap;
 
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,11 +27,14 @@ public class RestObject {
     private String endpoint;
     private HashMap<String, Object> body;
 
+    private Observable<HashMap<String, Object>> observable;
+
     /**
      * Builder pattern for RestObject
      */
     public static class Builder {
         private String endpoint;
+        private int id;
         private HashMap<String, Object> body;
 
         /**
@@ -100,11 +107,6 @@ public class RestObject {
     }
 
     /**
-     * Empty constructor
-     */
-    public RestObject() {}
-
-    /**
      * Constructor with endpoint
      * @param endpoint API endpoint
      * @param body body
@@ -156,12 +158,59 @@ public class RestObject {
 
     /**
      * Creates an object to remote
+     */
+    public void create(Restify.Call call) {
+        observable = service.create(endpoint, body);
+        execute(call);
+    }
+
+    /**
+     * Returns all objects
+     * @param call Call instance
+     */
+    public void findAll(Restify.Call call) {
+        observable = service.findAll(endpoint);
+        execute(call);
+    }
+
+    /**
+     * Return an object by ID
+     * @param id Object ID
+     * @param call Call instance
+     */
+    public void findById(int id, Restify.Call call) {
+        observable = service.findById(endpoint, id);
+        execute(call);
+    }
+
+    /**
+     * Updates an object
+     * @param id Object ID
+     * @param call Call instance
+     */
+    public void update(int id, Restify.Call call) {
+        observable = service.update(endpoint, id, body);
+        execute(call);
+    }
+
+    /**
+     * Deletes an object
+     * @param id Object ID
+     * @param call Call instance
+     */
+    public void delete(int id, Restify.Call call) {
+        observable = service.delete(endpoint, id);
+        execute(call);
+    }
+
+    /**
+     * Executes the call
      * @param call Call interface
      */
-    public void create(final Restify.Call call) {
-        service.post(endpoint, body).observeOn(Schedulers.io())
+    private void execute(final Restify.Call call) {
+        observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<RestResult>() {
+                .subscribe(new Subscriber<HashMap<String, Object>>() {
                     @Override
                     public void onCompleted() {
                         call.onCompleted();
@@ -173,10 +222,22 @@ public class RestObject {
                     }
 
                     @Override
-                    public void onNext(RestResult result) {
+                    public void onNext(HashMap<String, Object> result) {
                         call.onSuccess(result);
                     }
                 });
+    }
+
+    private void initUtils() {
+        this.restify = Restify.getInstance();
+        this.service = ApiService.createApiService(CRUD.class, restify.getBaseUrl());
+    }
+
+    /**
+     * Empty constructor
+     */
+    public RestObject() {
+        initUtils();
     }
 
     /**
@@ -186,13 +247,24 @@ public class RestObject {
     private RestObject(Builder builder) {
         this.endpoint = builder.endpoint;
         this.body = builder.body;
-        this.restify = Restify.getInstance();
-        this.service = ApiService.createApiService(CRUD.class, restify.getBaseUrl());
+        initUtils();
     }
 
+    /**
+     * API routes
+     */
     public interface CRUD {
         @POST("{endpoint}")
-        Observable<RestResult> post(String endpoint, @Body HashMap<String, Object> body);
+        Observable<HashMap<String, Object>> create(@Path("endpoint") String endpoint, @Body HashMap<String, Object> body);
+        @GET("{endpoint}")
+        Observable<HashMap<String, Object>> findAll(@Path("endpoint") String endpoint);
+        @GET("{endpoint}/{id}")
+        Observable<HashMap<String, Object>> findById(@Path("endpoint") String endpoint, @Path("id") int id);
+        @PUT("{endpoint}/{id}")
+        Observable<HashMap<String, Object>> update(@Path("endpoint") String endpoint,
+                                                   @Path("id") int id, @Body HashMap<String, Object> body);
+        @DELETE("{endpoint}/{id}")
+        Observable<HashMap<String, Object>> delete(@Path("endpoint") String endpoint, @Path("id") int id);
     }
 
 }

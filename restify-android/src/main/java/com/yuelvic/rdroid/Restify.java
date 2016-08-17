@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.yuelvic.rdroid.util.RestResult;
 
+import java.util.HashMap;
+
 /**
  * Created by yuelvic on 8/17/16.
  */
@@ -59,6 +61,11 @@ public class Restify {
                 .create();
     }
 
+    public static void initialize(String endpoint) {
+        new Builder().setBaseUrl(endpoint)
+                .create();
+    }
+
     /**
      * Private constructor for Restify
      * @param builder Builder instance for Restify
@@ -97,7 +104,7 @@ public class Restify {
     public interface Call {
         void onCompleted();
         void onError(Throwable e);
-        void onSuccess(RestResult result);
+        void onSuccess(HashMap<String, Object> result);
     }
 
 }
