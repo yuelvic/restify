@@ -2,6 +2,7 @@ package com.yuelvic.restify;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.yuelvic.rdroid.Restify;
@@ -16,11 +17,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Restify.initialize("https://yts.ag/api/v2/");
+        Restify.initialize("http://stg.api.swiperxapp.com/api/1/");
 
-        RestObject restObject = new RestObject();
-        restObject.setEndpoint("movie_details.json");
-        restObject.addConstraint("movie_id", 5506);
+        RestObject restObject = new RestObject.Builder()
+                .setEndpoint("users")
+                .addHeader("X-Warp-API-Key", "130rfenj1389eu398uhfr3198f")
+                .create();
 
         restObject.findAll(new Restify.Call() {
             @Override
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSuccess(HashMap<String, Object> result) {
-                System.out.println(new Gson().toJson(result));
+                Log.d("RESULT", new Gson().toJson(result));
             }
         });
     }

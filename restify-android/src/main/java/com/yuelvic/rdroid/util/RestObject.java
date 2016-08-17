@@ -9,6 +9,7 @@ import java.util.HashMap;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.HeaderMap;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -26,6 +27,7 @@ public class RestObject {
     private Restify restify;
     private CRUD service;
     private String endpoint;
+    private HashMap<String, Object> header;
     private HashMap<String, Object> body;
     private HashMap<String, Object> constraint;
 
@@ -37,7 +39,9 @@ public class RestObject {
     public static class Builder {
         private String endpoint;
         private int id;
+        private HashMap<String, Object> header;
         private HashMap<String, Object> body;
+        private HashMap<String, Object> constraint;
 
         /**
          * Sets the API endpoint
@@ -46,6 +50,28 @@ public class RestObject {
          */
         public Builder setEndpoint(String endpoint) {
             this.endpoint = endpoint;
+            return this;
+        }
+
+        /**
+         * Adds a header
+         * @param key Header key
+         * @param value Key value
+         * @return Builder instance
+         */
+        public Builder addHeader(String key, Object value) {
+            header.put(key, value);
+            return this;
+        }
+
+        /**
+         * Puts a constraint
+         * @param key Param key
+         * @param value Key value
+         * @return Builder instance
+         */
+        public Builder addConstraint(String key, Object value) {
+            constraint.put(key, value);
             return this;
         }
 
@@ -104,7 +130,9 @@ public class RestObject {
          * Builder constructor
          */
         public Builder() {
+            header = new HashMap<>();
             body = new HashMap<>();
+            constraint = new HashMap<>();
         }
     }
 
@@ -166,7 +194,7 @@ public class RestObject {
      * Creates an object to remote
      */
     public void create(Restify.Call call) {
-        observable = service.create(endpoint, body);
+        observable = service.create(header, endpoint, body);
         execute(call);
     }
 
@@ -175,7 +203,7 @@ public class RestObject {
      * @param call Call instance
      */
     public void findAll(Restify.Call call) {
-        observable = service.findAll(endpoint, constraint);
+        observable = service.findAll(header, endpoint, constraint);
         execute(call);
     }
 
@@ -185,7 +213,7 @@ public class RestObject {
      * @param call Call instance
      */
     public void findById(int id, Restify.Call call) {
-        observable = service.findById(endpoint, id);
+        observable = service.findById(header, endpoint, id);
         execute(call);
     }
 
@@ -195,7 +223,7 @@ public class RestObject {
      * @param call Call instance
      */
     public void update(int id, Restify.Call call) {
-        observable = service.update(endpoint, id, body);
+        observable = service.update(header, endpoint, id, body);
         execute(call);
     }
 
@@ -205,7 +233,7 @@ public class RestObject {
      * @param call Call instance
      */
     public void delete(int id, Restify.Call call) {
-        observable = service.delete(endpoint, id);
+        observable = service.delete(header, endpoint, id);
         execute(call);
     }
 
@@ -238,7 +266,6 @@ public class RestObject {
      * Initializes utilities
      */
     private void initUtils() {
-        this.constraint = new HashMap<>();
         this.restify = Restify.getInstance();
         this.service = ApiService.createApiService(CRUD.class, restify.getBaseUrl());
     }
@@ -247,6 +274,9 @@ public class RestObject {
      * Empty constructor
      */
     public RestObject() {
+        this.header = new HashMap<>();
+        this.body = new HashMap<>();
+        this.constraint = new HashMap<>();
         initUtils();
     }
 
@@ -256,7 +286,9 @@ public class RestObject {
      */
     private RestObject(Builder builder) {
         this.endpoint = builder.endpoint;
+        this.header = builder.header;
         this.body = builder.body;
+        this.constraint = builder.constraint;
         initUtils();
     }
 
@@ -265,16 +297,20 @@ public class RestObject {
      */
     public interface CRUD {
         @POST("{endpoint}")
-        Observable<HashMap<String, Object>> create(@Path("endpoint") String endpoint, @Body HashMap<String, Object> body);
+        Observable<HashMap<String, Object>> create(@HeaderMap HashMap<String, Object> header,
+                                                   @Path("endpoint") String endpoint, @Body HashMap<String, Object> body);
         @GET("{endpoint}")
-        Observable<HashMap<String, Object>> findAll(@Path("endpoint") String endpoint, @QueryMap HashMap<String, Object> constraint);
+        Observable<HashMap<String, Object>> findAll(@HeaderMap HashMap<String, Object> header,
+                                                    @Path("endpoint") String endpoint, @QueryMap HashMap<String, Object> constraint);
         @GET("{endpoint}/{id}")
-        Observable<HashMap<String, Object>> findById(@Path("endpoint") String endpoint, @Path("id") int id);
+        Observable<HashMap<String, Object>> findById(@HeaderMap HashMap<String, Object> header,
+                                                     @Path("endpoint") String endpoint, @Path("id") int id);
         @PUT("{endpoint}/{id}")
-        Observable<HashMap<String, Object>> update(@Path("endpoint") String endpoint,
+        Observable<HashMap<String, Object>> update(@HeaderMap HashMap<String, Object> header, @Path("endpoint") String endpoint,
                                                    @Path("id") int id, @Body HashMap<String, Object> body);
         @DELETE("{endpoint}/{id}")
-        Observable<HashMap<String, Object>> delete(@Path("endpoint") String endpoint, @Path("id") int id);
+        Observable<HashMap<String, Object>> delete(@HeaderMap HashMap<String, Object> header,
+                                                   @Path("endpoint") String endpoint, @Path("id") int id);
     }
 
 }
