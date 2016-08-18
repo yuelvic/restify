@@ -1,1 +1,1 @@
-include ':app', ':restify-android'
+include ':app', ':restify'

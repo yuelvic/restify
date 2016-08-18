@@ -29,6 +29,7 @@ public class RestObject {
     private Restify restify;
     private CRUD service;
     private String endpoint;
+    private boolean urlFormEncoded;
     private HashMap<String, Object> header;
     private HashMap<String, Object> body;
     private HashMap<String, Object> constraint;
@@ -40,7 +41,7 @@ public class RestObject {
      */
     public static class Builder {
         private String endpoint;
-        private int id;
+        private boolean urlFormEncoded;
         private HashMap<String, Object> header;
         private HashMap<String, Object> body;
         private HashMap<String, Object> constraint;
@@ -52,6 +53,16 @@ public class RestObject {
          */
         public Builder setEndpoint(String endpoint) {
             this.endpoint = endpoint;
+            return this;
+        }
+
+        /**
+         * Sets if request is form encoded
+         * @param urlFormEncoded Use form encoded or not
+         * @return Builder instance
+         */
+        public Builder setUrlFormEncoded(boolean urlFormEncoded) {
+            this.urlFormEncoded = urlFormEncoded;
             return this;
         }
 
@@ -83,7 +94,7 @@ public class RestObject {
          * @param value Key value
          * @return Builder instance
          */
-        public Builder put(String key, Object value) {
+        public Builder addField(String key, Object value) {
             body.put(key, value);
             return this;
         }
@@ -135,6 +146,14 @@ public class RestObject {
      */
     public void setEndpoint(String endpoint) {
         this.endpoint = endpoint;
+    }
+
+    /**
+     * Sets if request is form encoded
+     * @param urlFormEncoded Use form encoded or not
+     */
+    public void setUrlFormEncoded(boolean urlFormEncoded) {
+        this.urlFormEncoded = urlFormEncoded;
     }
 
     /**
@@ -191,8 +210,8 @@ public class RestObject {
     /**
      * Creates an object to remote
      */
-    public void post(Restify.Call call) {
-        observable = service.create(header, endpoint, body);
+    public void create(Restify.Call call) {
+        observable = (urlFormEncoded) ? service.encodedCreate(header, endpoint, body) : service.create(header, endpoint, body);
         execute(call);
     }
 
@@ -221,7 +240,7 @@ public class RestObject {
      * @param call Call instance
      */
     public void update(int id, Restify.Call call) {
-        observable = service.update(header, endpoint, id, body);
+        observable = (urlFormEncoded) ? service.encodedUpdate(header, endpoint, id, body) : service.update(header, endpoint, id, body);
         execute(call);
     }
 
@@ -284,6 +303,7 @@ public class RestObject {
      */
     private RestObject(Builder builder) {
         this.endpoint = builder.endpoint;
+        this.urlFormEncoded = builder.urlFormEncoded;
         this.header = builder.header;
         this.body = builder.body;
         this.constraint = builder.constraint;
@@ -294,9 +314,13 @@ public class RestObject {
      * API routes
      */
     public interface CRUD {
-        @FormUrlEncoded
         @POST("{endpoint}")
         Observable<HashMap<String, Object>> create(@HeaderMap HashMap<String, Object> header,
+                                                   @Path(value = "endpoint", encoded = true) String endpoint,
+                                                   @Body HashMap<String, Object> body);
+        @FormUrlEncoded
+        @POST("{endpoint}")
+        Observable<HashMap<String, Object>> encodedCreate(@HeaderMap HashMap<String, Object> header,
                                                    @Path(value = "endpoint", encoded = true) String endpoint,
                                                    @FieldMap HashMap<String, Object> body);
         @GET("{endpoint}")
@@ -307,9 +331,13 @@ public class RestObject {
         Observable<HashMap<String, Object>> findById(@HeaderMap HashMap<String, Object> header,
                                                      @Path(value = "endpoint", encoded = true) String endpoint,
                                                      @Path("id") int id);
-        @FormUrlEncoded
         @PUT("{endpoint}/{id}")
         Observable<HashMap<String, Object>> update(@HeaderMap HashMap<String, Object> header,
+                                                   @Path(value = "endpoint", encoded = true) String endpoint,
+                                                   @Path("id") int id, @Body HashMap<String, Object> body);
+        @FormUrlEncoded
+        @PUT("{endpoint}/{id}")
+        Observable<HashMap<String, Object>> encodedUpdate(@HeaderMap HashMap<String, Object> header,
                                                    @Path(value = "endpoint", encoded = true) String endpoint,
                                                    @Path("id") int id, @FieldMap HashMap<String, Object> body);
         @DELETE("{endpoint}/{id}")
