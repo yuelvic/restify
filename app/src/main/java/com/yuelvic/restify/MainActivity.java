@@ -24,14 +24,14 @@ public class MainActivity extends AppCompatActivity {
         textView2 = (TextView) findViewById(R.id.textview2);
 
         new Restify.Builder()
-                .addUrl("yts", "https://yts.ag/api/v2/")
-                .addUrl("swiperx", "http://stg.api.swiperxapp.com/api/1/")
+                .addUrl("movie", "http://api.movielibrary.com/api/v1")
+                .addUrl("music", "http://api.musicboom.com/api/v2")
                 .create();
 
         restObject = new RestObject.Builder()
-                .useBaseUrl("yts")
+                .useBaseUrl("movie")
                 .setEndpoint("list_movies.json")
-                .addConstraint("limit", 1)
+                .addConstraint("limit", 10)
                 .findAll(new Restify.Call() {
                     @Override
                     public void onCompleted() {
@@ -51,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchFromDiffUrl() {
-        restObject.useBaseUrl("swiperx");
-        restObject.setEndpoint("users");
-        restObject.addHeader("X-Warp-API-Key", "130rfenj1389eu398uhfr3198f");
+        restObject.useBaseUrl("music");
+        restObject.setEndpoint("music_list");
+        restObject.addHeader("API-KEY", "68fsduofd8s7f6t7sd");
         restObject.findAll(new Restify.Call() {
             @Override
             public void onCompleted() {

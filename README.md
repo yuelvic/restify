@@ -58,3 +58,42 @@ To use form encoding
 ```java
 setUrlFormEncoded(true);
 ```
+
+You can use multiple API base urls
+```java
+new Restify.Builder()
+    .addUrl("movie", "http://api.movielibrary.com/api/v1")
+    .addUrl("music", "http://api.musicboom.com/api/v2")
+    .create();
+    
+RestObject restObject = new RestObject.Builder()
+    .useBaseUrl("movie")
+    .setEndpoint("movie_list.json")
+    .addConstraint("show_cast", true)
+    .addConstraint("limit", 10)
+    .findAll(
+        @Override
+    	onCompleted() {}
+    		
+    	@Override
+    	onError(Throwable e) {}
+    		
+    	@Override
+    	onSuccess(RestResult result) {}
+    );
+    
+restObject.useBaseUrl("music");
+restObject.setEndpoint("music_list.json");
+restObject.addHeader("API-KEY", "68fsduofd8s7f6t7sd");
+restObject.addConstraint("genre", "pop");
+restObject.findAll(
+    @Override
+    onCompleted() {}
+    		
+    @Override
+    onError(Throwable e) {}
+    		
+    @Override
+    onSuccess(RestResult result) {}
+);
+```
