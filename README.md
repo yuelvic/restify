@@ -1,5 +1,11 @@
 # Restify
-Object based REST for Android
+Object based REST for Android. It eliminates boilerplate code.
+
+## Features
+* POST
+* GET
+* UPDATE
+* DELETE
 
 ## Installation
 
