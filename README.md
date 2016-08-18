@@ -35,6 +35,8 @@ Restify.initialize("http://api.movielibrary.com/api/v1/");
 Create a RestObject instance or use the builder class.
 
 ```java
+//Sample GET method
+
 new RestObject.Builder()
 	.setEndpoint("movies")
 	.addHeader("HEADER-KEY", "VALUE")
@@ -51,4 +53,9 @@ new RestObject.Builder()
 			tvName.setText(result.get("movie_name"));
 		}
 	));
+```
+
+To use form encoding
+```java
+setUrlFormEncoded(true);
 ```
