@@ -17,7 +17,7 @@ And to your project **build.gradle** file
 
 ```
 dependencies {
-    compile 'com.github.yuelvic:Restify:v0.0.1-alpha'
+    compile 'com.github.yuelvic:Restify:v0.0.2-alpha'
 }
 ```
 
