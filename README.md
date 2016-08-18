@@ -6,20 +6,19 @@ Object based REST for Android
 Add this to your root **build.gradle** file
 
 ```
-	allprojects {
-		repositories {
-			...
-			maven { url "https://jitpack.io" }
-		}
+allprojects {
+	repositories {
+		maven { url "https://jitpack.io" }
 	}
+}
 ```
 
 And to your project **build.gradle** file
 
 ```
-  	dependencies {
-		compile 'com.github.yuelvic:Restify:v0.0.1-alpha'
-	}
+dependencies {
+    compile 'com.github.yuelvic:Restify:v0.0.1-alpha'
+}
 ```
 
 ## Setup

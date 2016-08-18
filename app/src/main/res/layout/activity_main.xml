@@ -10,8 +10,16 @@
     tools:context="com.yuelvic.restify.MainActivity">
 
     <TextView
-        android:id="@+id/textview"
+        android:id="@+id/textview1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/textview2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textview1"
+        android:textColor="@android:color/holo_red_dark"/>
 
 </RelativeLayout>

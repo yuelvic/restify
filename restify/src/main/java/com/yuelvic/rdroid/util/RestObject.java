@@ -28,8 +28,10 @@ public class RestObject {
 
     private Restify restify;
     private CRUD service;
+    private String baseUrl;
     private String endpoint;
     private boolean urlFormEncoded;
+    private HashMap<String, String> baseUrls;
     private HashMap<String, Object> header;
     private HashMap<String, Object> body;
     private HashMap<String, Object> constraint;
@@ -40,11 +42,24 @@ public class RestObject {
      * Builder pattern for RestObject
      */
     public static class Builder {
+        private Restify restify;
+        private String baseUrl;
         private String endpoint;
         private boolean urlFormEncoded;
+        private HashMap<String, String> baseUrls;
         private HashMap<String, Object> header;
         private HashMap<String, Object> body;
         private HashMap<String, Object> constraint;
+
+        /**
+         * Sets the API endpoint based on given urls
+         * @param name URL key name
+         * @return Builder instance
+         */
+        public Builder useBaseUrl(String name) {
+            this.baseUrl = baseUrls.get(name);
+            return this;
+        }
 
         /**
          * Sets the API endpoint
@@ -106,6 +121,11 @@ public class RestObject {
             return new RestObject(this);
         }
 
+        /**
+         * Fetches all request occurrences
+         * @param call Callback interface
+         * @return RestObject instance
+         */
         public RestObject findAll(Restify.Call call) {
             RestObject restObject = new RestObject(this);
             restObject.findAll(call);
@@ -116,9 +136,12 @@ public class RestObject {
          * Builder constructor
          */
         public Builder() {
-            header = new HashMap<>();
-            body = new HashMap<>();
-            constraint = new HashMap<>();
+            this.restify = Restify.getInstance();
+            this.header = new HashMap<>();
+            this.body = new HashMap<>();
+            this.constraint = new HashMap<>();
+
+            this.baseUrls = this.restify.getBaseUrls();
         }
     }
 
@@ -130,6 +153,15 @@ public class RestObject {
     public RestObject(String endpoint, HashMap<String, Object> body) {
         this.endpoint = endpoint;
         this.body = body;
+    }
+
+    /**
+     * Sets the API endpoint based on given urls
+     * @param name URL key name
+     */
+    public void useBaseUrl(String name) {
+        this.baseUrl = baseUrls.get(name);
+        this.service = ApiService.createApiService(CRUD.class, this.baseUrl);
     }
 
     /**
@@ -280,21 +312,14 @@ public class RestObject {
     }
 
     /**
-     * Initializes utilities
-     */
-    private void initUtils() {
-        this.restify = Restify.getInstance();
-        this.service = ApiService.createApiService(CRUD.class, restify.getBaseUrl());
-    }
-
-    /**
      * Empty constructor
      */
     public RestObject() {
+        this.restify = Restify.getInstance();
+        this.baseUrls = restify.getBaseUrls();
         this.header = new HashMap<>();
         this.body = new HashMap<>();
         this.constraint = new HashMap<>();
-        initUtils();
     }
 
     /**
@@ -302,12 +327,15 @@ public class RestObject {
      * @param builder Builder instance
      */
     private RestObject(Builder builder) {
+        this.restify = builder.restify;
+        this.baseUrl = builder.baseUrl;
         this.endpoint = builder.endpoint;
+        this.baseUrls = builder.baseUrls;
         this.urlFormEncoded = builder.urlFormEncoded;
         this.header = builder.header;
         this.body = builder.body;
         this.constraint = builder.constraint;
-        initUtils();
+        this.service = ApiService.createApiService(CRUD.class, this.baseUrl);
     }
 
     /**
