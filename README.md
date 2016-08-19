@@ -32,6 +32,7 @@ dependencies {
 You must initialize Restify once in your project.
 
 ```java
+// @param Base URL
 Restify.initialize("http://api.movielibrary.com/api/v1/");
 ```
 
