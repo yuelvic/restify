@@ -71,7 +71,7 @@ You can use multiple API base urls
 new Restify.Builder()
     .addUrl("movie", "http://api.movielibrary.com/api/v1")
     .addUrl("music", "http://api.musicboom.com/api/v2")
-    .create();
+    .build();
     
 RestObject restObject = new RestObject.Builder()
     .useBaseUrl("movie")

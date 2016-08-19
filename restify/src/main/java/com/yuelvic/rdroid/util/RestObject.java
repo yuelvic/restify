@@ -117,8 +117,19 @@ public class RestObject {
         /**
          * Creates an instance of RestObject
          */
-        public RestObject create() {
+        public RestObject build() {
             return new RestObject(this);
+        }
+
+        /**
+         * Posts the body
+         * @param call Callback interface
+         * @return RestObject instance
+         */
+        public RestObject create(Restify.Call call) {
+            RestObject restObject = build();
+            restObject.create(call);
+            return restObject;
         }
 
         /**
@@ -127,8 +138,44 @@ public class RestObject {
          * @return RestObject instance
          */
         public RestObject findAll(Restify.Call call) {
-            RestObject restObject = new RestObject(this);
+            RestObject restObject = build();
             restObject.findAll(call);
+            return restObject;
+        }
+
+        /**
+         * Fetches request by ID
+         * @param id Object ID
+         * @param call Callback interface
+         * @return RestObject instance
+         */
+        public RestObject findById(int id, Restify.Call call) {
+            RestObject restObject = build();
+            restObject.findById(id, call);
+            return restObject;
+        }
+
+        /**
+         * Updates an object
+         * @param id Object ID
+         * @param call Callback interface
+         * @return RestObject instance
+         */
+        public RestObject update(int id, Restify.Call call) {
+            RestObject restObject = build();
+            restObject.update(id, call);
+            return restObject;
+        }
+
+        /**
+         * Deletes an object
+         * @param id Object ID
+         * @param call Callback interface
+         * @return RestObject instance
+         */
+        public RestObject delete(int id, Restify.Call call) {
+            RestObject restObject = build();
+            restObject.delete(id, call);
             return restObject;
         }
 

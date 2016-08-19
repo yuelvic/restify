@@ -16,7 +16,7 @@ public class ExampleUnitTest {
     @Test
     public void read() {
         Restify.initialize("https://yts.ag/api/v2/");
-        RestObject restObject = new RestObject.Builder().create();
+        RestObject restObject = new RestObject.Builder().build();
         restObject.findAll(new Restify.Call() {
             @Override
             public void onCompleted() {
