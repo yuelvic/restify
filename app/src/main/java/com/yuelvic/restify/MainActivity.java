@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         new Restify.Builder()
                 .addUrl("movie", "http://api.movielibrary.com/api/v1")
                 .addUrl("music", "http://api.musicboom.com/api/v2")
-                .create();
+                .build();
 
         restObject = new RestObject.Builder()
                 .useBaseUrl("movie")

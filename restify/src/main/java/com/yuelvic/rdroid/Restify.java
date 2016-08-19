@@ -66,7 +66,7 @@ public class Restify {
         /**
          * Initialize Restify
          */
-        public void create() {
+        public void build() {
             restify = new Restify(this);
         }
 
@@ -86,7 +86,7 @@ public class Restify {
     public static void initialize(Context context, String endpoint) {
         new Builder().setContext(context)
                 .setBaseUrl(endpoint)
-                .create();
+                .build();
     }
 
     /**
@@ -95,7 +95,7 @@ public class Restify {
      */
     public static void initialize(String endpoint) {
         new Builder().setBaseUrl(endpoint)
-                .create();
+                .build();
     }
 
     /**
@@ -104,7 +104,7 @@ public class Restify {
      */
     public static void initialize(HashMap<String, String> baseUrls) {
         new Builder().setBaseUrls(baseUrls)
-                .create();
+                .build();
     }
 
     /**
